@@ -30,16 +30,6 @@ const FloatNote = ({zIndex, setZindex, color, text, id, poX, poY}) => {
     const thisNote = allNotes.filter(item => item.id === id);
     const toUpdate = thisNote[0];
 
-    const handleTextUpdate = ()=> {
-        notesFunc(allNotes.map((item) =>{
-            if (item.id === id) {
-                return{
-                    ...item, note: textContent
-                }
-            }
-            return item;
-        }))
-    }
 
     const handleClose = () =>{
         notesFunc(allNotes.map((item) =>{
@@ -69,8 +59,18 @@ const FloatNote = ({zIndex, setZindex, color, text, id, poX, poY}) => {
     }
 
     useEffect(()=>{
+        const handleTextUpdate = ()=> {
+            notesFunc(allNotes.map((item) =>{
+                if (item.id === id) {
+                    return{
+                        ...item, note: textContent
+                    }
+                }
+                return item;
+            }))
+        }
         handleTextUpdate();
-    }, [textContent])
+    }, [textContent, allNotes, id, notesFunc]);
 
 
 
@@ -81,7 +81,7 @@ const FloatNote = ({zIndex, setZindex, color, text, id, poX, poY}) => {
         if ((noteY * winHeight) > 2.4 && (noteY * winHeight) < 75.5) {
             noteDiv.current.style.top = `${noteY * winHeight -1}%`;
         }
-    }, [noteX, noteY])
+    }, [noteX, noteY, noteDiv, winHeight, winWidth]);
     
     useEffect(() => {
         if (poX > 0) {
@@ -90,11 +90,11 @@ const FloatNote = ({zIndex, setZindex, color, text, id, poX, poY}) => {
         if (poY > 0) {
             noteDiv.current.style.top = `${poY}%`;
         }
-    }, [])
+    }, [noteDiv, poY, poX]);
 
     useEffect(()=>{
         setZindex(myIndex);
-    },[myIndex])
+    },[myIndex, setZindex]);
 
     useEffect(()=>{
         if (myIndex === zIndex) {
@@ -104,7 +104,7 @@ const FloatNote = ({zIndex, setZindex, color, text, id, poX, poY}) => {
                 dispatch(addNotes(toUpdate, `http://localhost:8000/notes/`));
             }
         }
-      }, [textContent])
+      }, [textContent, myIndex, zIndex, toUpdate, id, dispatch, listId]);
 
     return (
         <div className={`floatNote ${color ? color : "yel"}`} ref={noteDiv} onClick={()=>setMyIndex(zIndex+1)} style={{zIndex: `${myIndex}`}}>
